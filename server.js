@@ -17,7 +17,7 @@ app.use(morgan('tiny'));
 app.use(cors());
 // app.options;
 
-app.use('/product', productRoutes);
+app.use('/products', productRoutes);
 app.use('/category', categoryRouters);
 
 mongoose

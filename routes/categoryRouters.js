@@ -5,14 +5,17 @@ const {
   createCategory,
   deleteCategory,
   updateCategory,
+  getCategory,
 } = require('../controllers/categoryController');
 
 router.get('/', getCategories);
+
+router.get('/:id', getCategory);
 
 router.post('/', createCategory);
 
 router.delete('/:id', deleteCategory);
 
-router.patch('/:id', updateCategory);
+router.put('/:id', updateCategory);
 
 module.exports = router;

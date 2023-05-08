@@ -17,9 +17,10 @@ function checkRequireFields(fields, reqBody) {
     throw new Error('Please enter all required fields.');
 }
 
-function checkMongooseId(id) {
+function checkMongooseId(id, fieldName) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new Error('Id is not valid.');
+    if (fieldName) throw new Error(`${fieldName} id is not valid.`);
+    else throw new Error(`Id is not valid.`);
   }
 }
 
