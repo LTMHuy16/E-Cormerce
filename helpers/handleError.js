@@ -1,27 +1,19 @@
 const mongoose = require('mongoose');
 
-function checkRequireFields(fields, reqBody) {
-  if (!fields || !reqBody) return;
+function errorHandler(error, req, res, next) {
+  if (!error) return;
 
-  let emptyFields = [];
+  let errorObj = error,
+    status = 500;
 
-  if (Array.isArray(fields))
-    fields.forEach((field) => {
-      if (!reqBody[field]) emptyFields.push(field);
-    });
-  else if (!reqBody[fields]) emptyFields.push(fields);
-
-  if (emptyFields.length == 1)
-    throw new Error(`Field '${emptyFields[0]}' is required.`);
-  if (emptyFields.length > 1)
-    throw new Error('Please enter all required fields.');
-}
-
-function checkMongooseId(id, fieldName) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    if (fieldName) throw new Error(`${fieldName} id is not valid.`);
-    else throw new Error(`Id is not valid.`);
+  if (error.name == 'UnauthorizedError') {
+    errorObj = { message: 'The user is not authorized.' };
+    status = 401;
   }
+
+  if (Object.keys(errorObj) == 0) errorObj = { error: 'Something when wrong.' };
+
+  res.status(status).json(errorObj);
 }
 
-module.exports = { checkRequireFields, checkMongooseId };
+module.exports = { errorHandler };

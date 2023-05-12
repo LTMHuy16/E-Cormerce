@@ -1,14 +1,14 @@
 const {
   checkRequireFields,
   checkMongooseId,
-} = require('../helpers/handleError');
+} = require('../helpers/validator');
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
 
 async function getProducts(req, res) {
   const products = await Product.find();
 
-  if (!products) res.status(500).json({ error: 'No product was found' });
+  if (!products) res.status(400).json({ error: 'No product was found' });
 
   res.status(200).json(products);
 }
@@ -17,7 +17,7 @@ async function getFeaturedProducts(req, res) {
   const featuredProducts = await Product.find({ isFeatured: true });
 
   if (!featuredProducts)
-    res.status(500).json({ error: 'No featured products was found' });
+    res.status(400).json({ error: 'No featured products was found' });
 
   res.status(200).json(featuredProducts);
 }
@@ -65,7 +65,7 @@ async function createProduct(req, res) {
     const newProduct = await Product.create({ ...req.body });
 
     if (!newProduct)
-      return res.status(500).json({ error: "Can't not create this product." });
+      return res.status(400).json({ error: "Can't not create this product." });
 
     res.status(201).json(newProduct);
   } catch (error) {

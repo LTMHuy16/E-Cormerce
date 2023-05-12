@@ -2,13 +2,13 @@ const Category = require('../models/categoryModel');
 const {
   checkRequireFields,
   checkMongooseId,
-} = require('../helpers/handleError');
+} = require('../helpers/validator');
 
 async function getCategories(req, res) {
   const categoryList = await Category.find();
 
   if (!categoryList)
-    return res.status(500).json({ error: 'No category was found' });
+    return res.status(400).json({ error: 'No category was found' });
 
   res.status(200).json(categoryList);
 }
@@ -40,7 +40,7 @@ async function createCategory(req, res) {
     const category = await Category.create({ name, icon, color });
 
     if (!category)
-      return res.status(500).json({ error: "Can't not create this category" });
+      return res.status(400).json({ error: "Can't not create this category" });
 
     res.status(201).json(category);
   } catch (error) {
@@ -56,7 +56,7 @@ async function deleteCategory(req, res) {
 
     const category = await Category.findByIdAndRemove(categoryId);
 
-    if (!category) return res.status(500).json({ error: 'No such category' });
+    if (!category) return res.status(400).json({ error: 'No such category' });
 
     res.status(200).json(category);
   } catch (error) {
@@ -78,7 +78,7 @@ async function updateCategory(req, res) {
     );
 
     if (!category)
-      return res.status(500).json({ error: "Can't not update this category" });
+      return res.status(400).json({ error: "Can't not update this category" });
 
     res.status(201).json(category);
   } catch (error) {
