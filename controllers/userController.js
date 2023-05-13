@@ -1,8 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
-const { checkRequireFields } = require('../helpers/validator');
-const { validatorEmail, validatorPassword } = require('../helpers/validator');
+const {
+  validatorEmail,
+  validatorPassword,
+  checkRequireFields,
+  checkMongooseId,
+} = require('../helpers/validator');
 
 require('dotenv').config();
 
@@ -12,6 +16,19 @@ async function getUsers(req, res) {
   if (!users) res.status(400).json({ error: 'No user was found.' });
 
   res.status(200).json(users);
+}
+
+async function countUsers(req, res) {
+  try {
+    const userCount = await User.countDocuments({});
+
+    if (!userCount)
+      res.status(404).json({ error: "Can't not get count value." });
+
+    res.status(200).json({ count: userCount });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 }
 
 async function getSingleUser(req, res) {
@@ -48,6 +65,22 @@ async function createUser(req, res) {
   }
 }
 
+async function deleteUser(req, res) {
+  try {
+    checkRequireFields('id', req.params);
+    checkMongooseId(req.params.id);
+
+    const removedUser = await User.findByIdAndRemove(req.params.id);
+
+    if (!removedUser)
+      throw Error(`Can't not remove user with id '${req.params.id}'`);
+
+    res.status(200).json(removedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 async function userLogin(req, res) {
   try {
     const { email, password } = req.body;
@@ -77,4 +110,11 @@ async function userLogin(req, res) {
   }
 }
 
-module.exports = { getUsers, getSingleUser, createUser, userLogin };
+module.exports = {
+  getUsers,
+  countUsers,
+  getSingleUser,
+  createUser,
+  deleteUser,
+  userLogin,
+};

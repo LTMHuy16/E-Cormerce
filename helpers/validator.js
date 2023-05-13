@@ -1,4 +1,5 @@
 const validator = require('validator');
+const mongoose = require('mongoose');
 
 function checkRequireFields(fields, reqBody) {
   if (!fields || !reqBody) return;

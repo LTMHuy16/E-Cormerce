@@ -10,7 +10,7 @@ require('dotenv').config();
 const { authJwt } = require('./helpers/jwt');
 const { errorHandler } = require('./helpers/handleError');
 
-// CONTROLLERS
+// IMPORT CONTROLLERS
 const productRoutes = require('./routes/productRouters');
 const categoryRouters = require('./routes/categoryRouters');
 const userRouters = require('./routes/userRouters');
