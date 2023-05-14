@@ -2,7 +2,7 @@ const Category = require('../models/categoryModel');
 const {
   checkRequireFields,
   checkMongooseId,
-} = require('../helpers/validator');
+} = require('../validators/validator');
 
 async function getCategories(req, res) {
   const categoryList = await Category.find();

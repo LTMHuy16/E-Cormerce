@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { upload } = require('../utils/multer/multerStore');
 const {
   getProducts,
   getProduct,
@@ -8,6 +9,7 @@ const {
   createProduct,
   deleteProduct,
   countProducts,
+  updateImages,
 } = require('../controllers/productController');
 
 router.get('/', getProducts);
@@ -18,7 +20,9 @@ router.get('/feature', getFeaturedProducts);
 
 router.get('/:id', getProduct);
 
-router.post('/', createProduct);
+router.post('/', upload.single('image'), createProduct);
+
+router.put('/images/:id', upload.array('images', 20), updateImages);
 
 router.put('/:id', updateProduct);
 

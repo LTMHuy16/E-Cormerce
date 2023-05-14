@@ -6,7 +6,7 @@ const {
   validatorPassword,
   checkRequireFields,
   checkMongooseId,
-} = require('../helpers/validator');
+} = require('../validators/validator');
 
 require('dotenv').config();
 

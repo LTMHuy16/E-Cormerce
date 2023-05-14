@@ -1,9 +1,11 @@
 const {
   checkRequireFields,
   checkMongooseId,
-} = require('../helpers/validator');
+} = require('../validators/validator');
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
+const { createFilePath } = require('../utils/multer/multerStore');
+
 
 async function getProducts(req, res) {
   const products = await Product.find();
@@ -53,22 +55,60 @@ async function getProduct(req, res) {
 
 async function createProduct(req, res) {
   try {
+    // validate fields
     checkRequireFields(
       ['name', 'description', 'category', 'countInStock'],
       req.body
     );
     checkMongooseId(req.body.category, 'Category');
 
+    // check exist category of product
     const category = await Category.findById(req.body.category);
     if (!category) throw new Error("Can't not found category.");
 
-    const newProduct = await Product.create({ ...req.body });
+    // handle product media file
+    const imageUrl = createFilePath(req, req.file);
+
+    // create product
+    const newProduct = await Product.create({ ...req.body, image: imageUrl });
 
     if (!newProduct)
       return res.status(400).json({ error: "Can't not create this product." });
 
     res.status(201).json(newProduct);
   } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+async function updateImages(req, res) {
+  try {
+    checkMongooseId(req.params.id);
+    const files = req.files;
+    let filePaths = [];
+
+    if (files) {
+      files.map((file) => {
+        const fileUrl = createFilePath(req, file);
+        filePaths.push(fileUrl);
+      });
+    }
+
+    console.log(filePaths);
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        images: filePaths,
+      },
+      { new: true }
+    );
+
+    if (!updateProduct) throw Error('Can not update this product.');
+
+    res.status(200).json({ updatedProduct });
+  } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 }
@@ -121,6 +161,7 @@ module.exports = {
   getFeaturedProducts,
   countProducts,
   getProduct,
+  updateImages,
   createProduct,
   updateProduct,
   deleteProduct,

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { checkMongooseId } = require('../helpers/handleError');
+const { checkMongooseId } = require('../middleware/handleError');
 
 const categorySchema = new mongoose.Schema({
   name: {
@@ -29,6 +29,10 @@ categorySchema.virtual('id').get(function () {
 
 categorySchema.set('toJSON', {
   virtuals: true,
+  transform: function (doc, ret) {
+    ret.id = ret._id;
+    delete ret._id;
+  },
 });
 
 module.exports = mongoose.model('Category', categorySchema);
